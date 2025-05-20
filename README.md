@@ -1,21 +1,21 @@
-### ByondAPI-nim
+# ByondAPI-nim
 Nim bindings for interacting with ByondAPI
 
-### How to install?
+# How to install?
 
-# Bash
+### From Nimble
 ```bash
 nimble install byondapi
 ```
 
-# Git
-```
+### From Git
+```bash
 git clone https://github.com/Antoonij/byondapi-nim.git
 cd byondapi-nim
 nimble install
 ```
 
-### How to use?
+# How to use?
 ```
 import byondapi_macros/ffi # byondProc macro
 import byondapi/value/lib # ByondValue definition/converters/constructors
@@ -48,4 +48,9 @@ byondProc:
   # Call from byond example: call_ext("dllfile.dll", "byond:secondExported_ffi")(your args)
   proc secondExported(): ByondValue = 
     ByondValue.new()
+```
+
+# How to compile your projects?
+```bash
+nimble c --cpu:i386 --app:lib --d:release path_to_nim_file.nim
 ```
