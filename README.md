@@ -21,8 +21,8 @@ import byondapi_macros/ffi # byondProc macro
 import byondapi/value/lib # ByondValue definition/converters/constructors
 import byondapi/[procs, strings, vars, threadsync]
 
-# That macros will create exported **procname**_ffi for all procs in macros body and unpack args into them. Non-existent args will be filled with null ByondValues. 
-# Make sure you using **byond:** prefix in call_ext because byondProc can work only with ByondValues
+# That macros will create exported <strong>procname</strong>_ffi for all procs in macros body and unpack args into them. Non-existent args will be filled with null ByondValues. 
+# Make sure you using <strong>byond:</strong> prefix in call_ext because byondProc can work only with ByondValues
 byondProc:
   # Call from byond example: call_ext("dllfile.dll", "byond:meow_ffi")(your args)
   proc meow(sun: ByondValue, sin: ByondValue, nonexists: ByondValue): ByondValue =
