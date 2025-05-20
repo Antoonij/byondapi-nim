@@ -1,5 +1,6 @@
 # ByondAPI-nim
 Nim bindings for interacting with ByondAPI
+Currently, not all bindings have been tested, so full functionality is not guaranteed.
 
 # How to install?
 
