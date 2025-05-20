@@ -1,4 +1,4 @@
-import macros, typetraits, ../byondapi_raw/byondapi, ../byondapi/error, strutils, ../byondapi/value/lib
+import macros, typetraits, ../byondapi_raw/byondapi, ../byondapi/[error, procs], strutils, ../byondapi/value/lib
 
 proc fromRawPartsToSeq(argv: ptr ByondValue, argc: int, paramCount: int): seq[ByondValue] =
   result = newSeq[ByondValue](paramCount)
@@ -10,8 +10,6 @@ proc fromRawPartsToSeq(argv: ptr ByondValue, argc: int, paramCount: int): seq[By
 
   for i in argc ..< paramCount:
     result[i] = ByondValue.new()
-
-  return result
 
 macro byondProc*(body: untyped): untyped =
   if body.kind != nnkStmtList:
@@ -76,7 +74,7 @@ macro byondProc*(body: untyped): untyped =
           result = `clr`
 
         except CatchableError as err:
-          crash("NIM FFI ERROR: " & $err.name & ": " & $err.msg)
+          discard callGlobalProc("stack_trace", [ByondValue.new("NIM FFI ERROR: " & $err.name & ": " & $err.msg)])
 
     output.add(wrapper)
 

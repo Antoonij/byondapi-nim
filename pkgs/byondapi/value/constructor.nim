@@ -5,7 +5,7 @@ proc new*(typ: type ByondValue): ByondValue =
 
 proc new*(typ: type ByondValue, str: string): ByondValue =
   result = ByondValue(xtype: STRING)
-  result.setStr(str.addGetStrId())
+  result.setStr(str)
 
 proc new*(typ: type ByondValue, value: cfloat): ByondValue =
   result = ByondValue(xtype: NUMBER)

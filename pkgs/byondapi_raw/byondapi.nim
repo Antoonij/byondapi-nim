@@ -65,7 +65,7 @@ type
     x*, y*, z*: s2c
     junk*: s2c
 
-  CByondPixLoc* {.bycopy.}= object
+  CByondPixLoc* {.bycopy.} = object
     x*, y*: cfloat
     z*: s2c
     junk*: s2c
