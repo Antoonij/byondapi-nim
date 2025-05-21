@@ -5,12 +5,6 @@ Currently, not all bindings have been tested, so full functionality is not guara
 
 # How to install?
 
-### From Nimble (Not yet published, use git)
-```bash
-nimble install byondapi
-```
-
-### From Git
 ```bash
 git clone https://github.com/Antoonij/byondapi-nim.git
 cd byondapi-nim
