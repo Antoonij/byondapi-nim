@@ -5,7 +5,7 @@ Currently, not all bindings have been tested, so full functionality is not guara
 
 # How to install?
 
-### From Nimble
+### From Nimble (Not yet published, use git)
 ```bash
 nimble install byondapi
 ```
@@ -55,6 +55,13 @@ byondProc:
 ```
 
 # How to compile your projects?
+
+### Windows
 ```bash
-nimble c --cpu:i386 --app:lib --d:release path_to_nim_file.nim
+nimble c --cpu:i386 --app:lib --mm:arc -d:release path_to_nim_file.nim
+```
+
+### Linux
+```bash
+nimble c --cpu:i386 --os:linux --app:lib --mm:arc -d:release path_to_nim_file.nim
 ```
