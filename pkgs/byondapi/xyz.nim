@@ -23,13 +23,9 @@ proc getBlock*(corner1, corner2: ByondXYZ): seq[ByondValue] =
     result.setLen(actualLen)
 
 proc locateXYZ*(xyz: ByondXYZ): ByondValue =
-  var res: ByondValue = ByondValue.new()
-  discard Byond_LocateXYZ(addr xyz, addr res)
-
-  return res
+  result = ByondValue.new()
+  discard Byond_LocateXYZ(addr xyz, addr result)
 
 proc getXYZ*(src: ByondValue): ByondXYZ =
-  var res: ByondXYZ
-  discard Byond_GetXYZ(addr src, addr res)
-
-  return res
+  result = ByondXYZ()
+  discard Byond_GetXYZ(addr src, addr result)

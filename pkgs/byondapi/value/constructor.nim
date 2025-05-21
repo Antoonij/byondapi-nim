@@ -12,21 +12,15 @@ proc new*(typ: type ByondValue, value: cfloat): ByondValue =
   result.num = value
 
 proc newObj*(typ: type ByondValue, args: openarray[ByondValue]): ByondValue =
-  var res: ByondValue = ByondValue.new()
+  result = ByondValue.new()
   let argCount = args.len.u4c
   let argPtr = if argCount > 0: addr args[0] else: nil
 
-  if not Byond_New(addr typ, argPtr, argCount, addr res):
+  if not Byond_New(addr typ, argPtr, argCount, addr result):
     raise newException(ByondCallError, "Failed to create new object of type.")
 
-  return res
-
 proc newList*(typ: type ByondValue): ByondValue =
-  var res: ByondValue = ByondValue.new()
+  result = ByondValue.new(xtype: LIST)
 
-  if not Byond_CreateList(addr res):
+  if not Byond_CreateList(addr result):
     raise newException(ByondCallError, "Failed to create list.")
-  
-  res.xtype = LIST
-
-  return res

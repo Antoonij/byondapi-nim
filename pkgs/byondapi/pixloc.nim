@@ -1,16 +1,16 @@
-import ../byondapi_raw/byondapi, error, value/value
+import ../byondapi_raw/byondapi, error, value/value, macros
+
+when BYOND_MAJOR < 516:
+  static:
+    error "This file is only compatible with BYOND version 516+"
 
 type
     ByondPixLoc* = CByondPixLoc
 
 proc getPixLoc*(src: ByondValue): ByondPixLoc =
-  var res: ByondPixLoc
-  discard Byond_GetPixLoc(addr src, addr res)
-
-  return res
+  result = ByondPixLoc()
+  discard Byond_GetPixLoc(addr src, addr result)
 
 proc getBoundPixLoc*(src: ByondValue, dir: u1c): ByondPixLoc =
-  var res: ByondPixLoc
-  discard Byond_BoundPixLoc(addr src, dir, addr res)
-
-  return res
+  result = ByondPixLoc()
+  discard Byond_BoundPixLoc(addr src, dir, addr result)

@@ -65,3 +65,12 @@ nimble c --cpu:i386 --app:lib --mm:arc -d:release path_to_nim_file.nim
 ```bash
 nimble c --cpu:i386 --os:linux --app:lib --mm:arc -d:release path_to_nim_file.nim
 ```
+
+### Additional compile defines
+
+```bash
+-d:BYOND_MAJOR=version
+-d:BYOND_MINOR=version
+```
+
+By default they will be set to latest API version (defined in byondapi.nim)

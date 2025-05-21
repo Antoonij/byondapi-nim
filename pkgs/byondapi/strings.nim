@@ -17,4 +17,6 @@ proc addGetStrId*(str: string): u4c =
   return id
 
 proc setStr*(v: var ByondValue, str: string) = ByondValue_SetStr(addr v, str.cstring)
-proc setStr*(v: var ByondValue, strid: u4c) = ByondValue_SetStrId(addr v, strid)
+
+when BYOND_MAJOR >= 516:
+  proc setStr*(v: var ByondValue, strid: u4c) = ByondValue_SetStrId(addr v, strid)

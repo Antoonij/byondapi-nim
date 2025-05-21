@@ -1,5 +1,7 @@
 const
   DM64BIT* = when defined(amd64) or defined(arm64): true else: false
+  BYOND_MAJOR* {.intdefine.} = 516
+  BYOND_MINOR* {.intdefine.} = 1651
 
 type
   u1c* = uint8
