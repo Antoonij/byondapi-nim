@@ -56,12 +56,12 @@ byondProc:
 
 # How to compile your projects?
 
-### Windows
+### Windows target
 ```bash
-nimble c --cpu:i386 --app:lib --mm:arc -d:release path_to_nim_file.nim
+nimble c --cpu:i386 --os:windows --app:lib --mm:arc -d:release path_to_nim_file.nim
 ```
 
-### Linux
+### Linux target
 ```bash
 nimble c --cpu:i386 --os:linux --app:lib --mm:arc -d:release path_to_nim_file.nim
 ```
