@@ -1,6 +1,6 @@
 import value/[constructor, value], ../byondapi_raw/byondapi, error, std/options, type_tag
 
-proc readList*(loc: ByondValue): seq[ByondValue] =
+proc readList*(loc {.byref.}: ByondValue): seq[ByondValue] =
   if not loc.isList():
     raise newException(ByondCallError, "List operation on non-list")
 
@@ -22,7 +22,7 @@ proc readList*(loc: ByondValue): seq[ByondValue] =
   if actualLen < len:
     result.setLen(actualLen)
 
-proc writeList*(loc: ByondValue, items: seq[ByondValue]) =
+proc writeList*(loc {.byref.}: ByondValue, items: seq[ByondValue]) =
   if not loc.isList():
     raise newException(ByondCallError, "List operation on non-list")
 
@@ -32,7 +32,7 @@ proc writeList*(loc: ByondValue, items: seq[ByondValue]) =
   if not Byond_WriteList(addr loc, buffer, len):
     raise newException(ByondCallError, "Failed to write list.")
 
-proc readListAssoc*(loc: ByondValue): seq[ByondValue] =
+proc readListAssoc*(loc {.byref.}: ByondValue): seq[ByondValue] =
   if not loc.isList():
     raise newException(ByondCallError, "List operation on non-list")
 
@@ -54,7 +54,7 @@ proc readListAssoc*(loc: ByondValue): seq[ByondValue] =
   if actualLen < len:
     result.setLen(actualLen)
 
-proc readListIndex*(loc: ByondValue, idx: ByondValue): ByondValue =
+proc readListIndex*(loc {.byref.}: ByondValue, idx: ByondValue): ByondValue =
   if not loc.isList():
     raise newException(ByondCallError, "List operation on non-list")
 
@@ -63,34 +63,28 @@ proc readListIndex*(loc: ByondValue, idx: ByondValue): ByondValue =
   if not Byond_ReadListIndex(addr loc, addr idx, addr result):
     raise newException(ByondCallError, "Failed to read list index.")
 
-proc writeListIndex*(loc: ByondValue, idx: ByondValue, val: ByondValue) =
+proc writeListIndex*(loc {.byref.}: ByondValue, idx: ByondValue, val: ByondValue) =
   if not loc.isList():
     raise newException(ByondCallError, "List operation on non-list")
   
   if not Byond_WriteListIndex(addr loc, addr idx, addr val):
     raise newException(ByondCallError, "Failed to write list index.")
 
-proc locateIn*(typ: ByondValue, listParam: ByondValue): Option[ByondValue] =
-  result = ByondValue.new()
+proc locateIn*(src {.byref.}: ByondValue, listParam: ByondValue): Option[ByondValue] =
+  var wrappedResult = ByondValue.new()
 
-  if not Byond_LocateIn(addr typ, addr listParam, addr result):
+  if not Byond_LocateIn(addr src, addr listParam, addr wrappedResult):
     raise newException(ByondCallError, "Failed during locateIn API call.")
 
-  if res.isNull():
+  if wrappedResult.isNull():
     return none[ByondValue]()
 
-  return some(res)
+  return some(wrappedResult)
 
-proc length*(src: ByondValue): ByondValue =
+proc length*(src {.byref.}: ByondValue): ByondValue =
   result = ByondValue.new()
 
   if not Byond_Length(addr src, addr result):
     raise newException(ByondCallError, "Failed to get length.")
 
-proc len*(src: ByondValue): cfloat = src.length().num
-
-proc newArglist*(typ: ByondValue, arglist: ByondValue): ByondValue =
-  result = ByondValue.new()
-
-  if not Byond_NewArglist(addr typ, addr arglist, addr result):
-    raise newException(ByondCallError, "Failed to create new object of type using arglist.")
+proc len*(src {.byref.}: ByondValue): cfloat = src.length().num

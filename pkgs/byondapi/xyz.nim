@@ -22,10 +22,10 @@ proc getBlock*(corner1, corner2: ByondXYZ): seq[ByondValue] =
   if actualLen < len:
     result.setLen(actualLen)
 
-proc locateXYZ*(xyz: ByondXYZ): ByondValue =
+proc locateXYZ*(xyz {.byref.}: ByondXYZ): ByondValue =
   result = ByondValue.new()
   discard Byond_LocateXYZ(addr xyz, addr result)
 
-proc getXYZ*(src: ByondValue): ByondXYZ =
+proc getXYZ*(src {.byref.}: ByondValue): ByondXYZ =
   result = ByondXYZ()
   discard Byond_GetXYZ(addr src, addr result)

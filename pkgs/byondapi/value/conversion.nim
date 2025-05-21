@@ -6,7 +6,7 @@ converter toCfloat*(src: ByondValue): cfloat =
 converter toByondValue*(src: cfloat): ByondValue =
     ByondValue.new(src)
 
-proc toString*(src: ByondValue): string =
+proc toString*(src {.byref.}: ByondValue): string =
   if not src.isStr():
     raise newException(ByondCallError, "String conversion on non-string value.")
 
