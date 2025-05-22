@@ -1,4 +1,4 @@
-import macros, typetraits, ../byondapi_raw/byondapi, ../byondapi/[error, procs], strutils, ../byondapi/value/lib
+import macros, typetraits, ../byondapi_raw/byondapi, ../byondapi/procs, strutils, ../byondapi/value/lib
 
 proc fromRawPartsToSeq(argv: ptr ByondValue, argc: int, paramCount: int): seq[ByondValue] =
   result = newSeq[ByondValue](paramCount)
@@ -32,7 +32,6 @@ macro byondProc*(body: untyped): untyped =
 
     if nameNode.isNil:
       error("Could not find the procedure name (nnkIdent node) within the proc definition AST.", procDef)
-      continue
 
     let nameStr = $nameNode
     let ffiNameStr = nameStr & "_ffi"

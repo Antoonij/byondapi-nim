@@ -1,4 +1,4 @@
-import ../byondapi_raw/byondapi, error, value/value, macros
+import ../byondapi_raw/byondapi, value/value
 
 when BYOND_MAJOR < 516:
   static:

@@ -1,4 +1,4 @@
-import value/[constructor, value], ../byondapi_raw/byondapi, error, std/options, type_tag
+import value/[constructor, value], ../byondapi_raw/byondapi, error, std/options
 
 proc readList*(loc {.byref.}: ByondValue): seq[ByondValue] =
   if not loc.isList():
