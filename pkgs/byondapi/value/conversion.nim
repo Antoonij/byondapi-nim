@@ -11,10 +11,7 @@ proc toString*(src {.byref.}: ByondValue): string =
     raise newException(ByondCallError, "String conversion on non-string value.")
 
   var buflen: u4c = 0
-  let success = Byond_ToString(addr src, nil, buflen)
-
-  if not success and buflen == 0:
-    raise newException(ByondCallError, "Failed to convert value to string (initial size query failed).")
+  handleByondError(Byond_ToString(addr src, nil, buflen))
 
   if buflen == 0:
     return ""
@@ -24,7 +21,6 @@ proc toString*(src {.byref.}: ByondValue): string =
 
   let buffer = cast[cstring](raw)
 
-  if not Byond_ToString(addr src, buffer, buflen):
-    raise newException(ByondCallError, "Failed to convert value to string (data read failed).")
+  handleByondError(Byond_ToString(addr src, buffer, buflen))
 
   result = $buffer

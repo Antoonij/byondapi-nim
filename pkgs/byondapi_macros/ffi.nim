@@ -73,7 +73,7 @@ macro byondProc*(body: untyped): untyped =
           result = `clr`
 
         except CatchableError as err:
-          discard callGlobalProc("stack_trace", [ByondValue.new("NIM FFI ERROR: " & $err.name & ": " & $err.msg)])
+          discard callGlobalProc("byondapi_stack_trace", [ByondValue.new("NIM FFI ERROR: " & $err.name & ": " & $err.msg)])
 
     output.add(wrapper)
 

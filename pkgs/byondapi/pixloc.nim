@@ -1,4 +1,4 @@
-import ../byondapi_raw/byondapi, value/value
+import ../byondapi_raw/byondapi, value/value, error
 
 when BYOND_MAJOR < 516:
   static:
@@ -9,8 +9,8 @@ type
 
 proc getPixLoc*(src {.byref.}: ByondValue): ByondPixLoc =
   result = ByondPixLoc()
-  discard Byond_GetPixLoc(addr src, addr result)
+  handleByondError(Byond_GetPixLoc(addr src, addr result))
 
 proc getBoundPixLoc*(src {.byref.}: ByondValue, dir: u1c): ByondPixLoc =
   result = ByondPixLoc()
-  discard Byond_BoundPixLoc(addr src, dir, addr result)
+  handleByondError(Byond_BoundPixLoc(addr src, dir, addr result))
