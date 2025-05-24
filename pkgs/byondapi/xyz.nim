@@ -5,6 +5,7 @@ type
 
 proc getBlock*(corner1, corner2: ByondXYZ): seq[ByondValue] =
   var len: u4c = 0
+
   handleByondError(Byond_Block(addr corner1, addr corner2, nil, len))
 
   if len == 0:
@@ -20,8 +21,10 @@ proc getBlock*(corner1, corner2: ByondXYZ): seq[ByondValue] =
 
 proc locateXYZ*(xyz {.byref.}: ByondXYZ): ByondValue =
   result = ByondValue.new()
+
   discard Byond_LocateXYZ(addr xyz, addr result)
 
 proc getXYZ*(src {.byref.}: ByondValue): ByondXYZ =
   result = ByondXYZ()
+  
   discard Byond_GetXYZ(addr src, addr result)

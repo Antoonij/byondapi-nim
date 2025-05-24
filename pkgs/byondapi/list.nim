@@ -67,7 +67,7 @@ proc locateIn*(src {.byref.}: ByondValue, listParam: ByondValue): Option[ByondVa
   if wrappedResult.isNull():
     return none(ByondValue)
 
-  return some(wrappedResult)
+  some(wrappedResult)
 
 proc length*(src {.byref.}: ByondValue): ByondValue =
   result = ByondValue.new()

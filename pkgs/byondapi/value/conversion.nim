@@ -11,6 +11,7 @@ proc toString*(src {.byref.}: ByondValue): string =
     raise newException(ByondCallError, "String conversion on non-string value.")
 
   var buflen: u4c = 0
+
   handleByondError(Byond_ToString(addr src, nil, buflen))
 
   if buflen == 0:
@@ -23,4 +24,4 @@ proc toString*(src {.byref.}: ByondValue): string =
 
   handleByondError(Byond_ToString(addr src, buffer, buflen))
 
-  result = $buffer
+  $buffer
