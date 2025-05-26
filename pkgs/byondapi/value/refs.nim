@@ -1,4 +1,4 @@
-import value/value, error, ../byondapi_raw/byondapi
+import value, ../error, ../../byondapi_raw/byondapi
 
 proc incRef*(src {.byref.}: ByondValue) = ByondValue_IncRef(addr src)
 
@@ -13,3 +13,21 @@ proc refcount*(src {.byref.}: ByondValue): u4c =
   result = 0
 
   handleByondError(Byond_Refcount(addr src, addr result))
+
+type
+  TracedByondValue* = object
+    inner: ByondValue
+
+template `.`*(src: TracedByondValue, field: untyped): untyped =
+  src.inner.`field`
+
+proc `=destroy`*(src: var TracedByondValue) =
+  src.decRef()
+
+proc `=copy`*(dest: var TracedByondValue, src: TracedByondValue) =
+  dest = src
+  dest.incRef()
+
+converter toTraced*(src: ByondValue): TracedByondValue =
+  src.incRef()
+  TracedByondValue(inner: src)

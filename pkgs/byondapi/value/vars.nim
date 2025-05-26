@@ -1,4 +1,4 @@
-import ../byondapi_raw/byondapi, error, value/[value, constructor]
+import ../../byondapi_raw/byondapi, ../error, value, constructor
 
 proc readVar*(loc {.byref.}: ByondValue, varname: string): ByondValue =
   result = ByondValue.new()

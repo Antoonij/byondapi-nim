@@ -13,9 +13,10 @@ nimble install
 
 # How to use?
 ```
-import byondapi_macros/ffi # byondProc macro
-import byondapi/value/lib # ByondValue definition/converters/constructors
-import byondapi/[procs, strings, vars, threadsync]
+import 
+  byondapi_macros/ffi, # byondProc macro
+  byondapi/value/lib, # ByondValue definition/converters/constructors
+  byondapi/[global_proc, threadsync]
 
 # This macro will create exported procs named `procname`_ffi for all procs in the body.
 # The macro also unpacks arguments from BYOND into the original procs based on their parameters.

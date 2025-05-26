@@ -1,4 +1,4 @@
-import value/[value, constructor], ../byondapi_raw/byondapi, error
+import value, constructor, ../../byondapi_raw/byondapi, ../error
 
 proc readPointer*(ptrVal {.byref.}: ByondValue): ByondValue =
   result = ByondValue.new()

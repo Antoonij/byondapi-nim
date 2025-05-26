@@ -1,5 +1,7 @@
 import ../byondapi_raw/byondapi
 
+export ByondValueType
+
 const
     NULL* = BYOND_TYPE_NULL
     NUMBER* = BYOND_TYPE_NUMBER

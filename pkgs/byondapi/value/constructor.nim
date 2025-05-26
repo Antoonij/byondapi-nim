@@ -1,4 +1,4 @@
-import value, ../strings, ../type_tag, ../../byondapi_raw/byondapi, ../error
+import value, ../type_tag, ../../byondapi_raw/byondapi, ../error
 
 proc new*(typ: type ByondValue): ByondValue = 
   ByondValue(xtype: NULL)
@@ -20,7 +20,7 @@ proc newList*(typ: type ByondValue): ByondValue =
 
   handleByondError(Byond_CreateList(addr result))
 
-proc newObj*(typepath: ByondValue, args: openarray[ByondValue]): ByondValue =
+proc newObj*(typepath: ByondValue, args: openArray[ByondValue]): ByondValue =
   result = ByondValue.new()
   
   let argCount = args.len.u4c

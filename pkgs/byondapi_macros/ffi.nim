@@ -1,4 +1,4 @@
-import macros, typetraits, ../byondapi_raw/byondapi, ../byondapi/procs, strutils, ../byondapi/value/lib
+import macros, typetraits, ../byondapi_raw/byondapi, ../byondapi/global_proc, strutils, ../byondapi/value/[value, constructor]
 
 proc fromRawPartsToSeq(argv: ptr ByondValue, argc: int, paramCount: int): seq[ByondValue] =
   result = newSeq[ByondValue](paramCount)

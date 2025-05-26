@@ -12,7 +12,7 @@ proc addGetStrId*(str: string): u4c =
   if result == NONE_U4C:
     raise newException(ByondCallError, "Failed to add or get string ID for: '" & str & "'")
 
-proc setStr*(v: var ByondValue, str: string) = ByondValue_SetStr(addr v, str.cstring)
+proc setStr*(src: var ByondValue, str: string) = ByondValue_SetStr(addr src, str.cstring)
 
 when BYOND_MAJOR >= 516:
-  proc setStr*(v: var ByondValue, strid: u4c) = ByondValue_SetStrId(addr v, strid)
+  proc setStr*(src: var ByondValue, strid: u4c) = ByondValue_SetStrId(addr src, strid)
