@@ -70,7 +70,7 @@ nimble c --cpu:i386 --os:linux --app:lib --mm:arc -d:release path_to_nim_file.ni
 
 By default they will be set to latest API version (defined in byondapi.nim)
 
-Do not compile in debug mode, call conventions won't work
+Do not compile with -d: debug, call conventions won't work
 
 # Byond version < 516
 

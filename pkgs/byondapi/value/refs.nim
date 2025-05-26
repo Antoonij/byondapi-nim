@@ -16,7 +16,7 @@ proc refcount*(src {.byref.}: ByondValue): u4c =
 
 type
   TracedByondValue* = object
-    inner: ByondValue
+    inner*: ByondValue
 
 template `.`*(src: TracedByondValue, field: untyped): untyped =
   src.inner.`field`
