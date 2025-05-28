@@ -1,4 +1,4 @@
-import ../byondapi_raw/byondapi, error, value/value
+import ../byondapi_raw/byondapi, error, value/value, ../byond_version
 
 proc getStrId*(str: string): u4c = 
   result = Byond_GetStrId(str.cstring)
@@ -14,5 +14,5 @@ proc addGetStrId*(str: string): u4c =
 
 proc setStr*(src: var ByondValue, str: string) = ByondValue_SetStr(addr src, str.cstring)
 
-when BYOND_MAJOR >= 516:
+when ByondVersion >= 516:
   proc setStr*(src: var ByondValue, strid: u4c) = ByondValue_SetStrId(addr src, strid)

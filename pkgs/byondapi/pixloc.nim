@@ -1,6 +1,6 @@
-import ../byondapi_raw/byondapi, value/value, error
+import ../byondapi_raw/byondapi, value/value, error, ../byond_version
 
-when BYOND_MAJOR >= 516:
+when ByondVersion >= 516:
   type
       ByondPixLoc* = CByondPixLoc
 

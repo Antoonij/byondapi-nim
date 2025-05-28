@@ -1,9 +1,9 @@
-import ../byondapi_raw/byondapi, std/options
+import ../byondapi_raw/byondapi, std/options, ../byond_version
 
 type
   ByondCallError* = object of CatchableError
 
-when BYOND_MAJOR >= 516:
+when ByondVersion >= 516:
   proc crash*(message: string) = Byond_CRASH(message.cstring)
 
 proc getLastError*(): Option[string] = 

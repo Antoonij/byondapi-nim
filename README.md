@@ -64,11 +64,11 @@ nimble c --cpu:i386 --os:linux --app:lib --mm:arc -d:release path_to_nim_file.ni
 ### Additional compile defines
 
 ```bash
--d:BYOND_MAJOR=version
--d:BYOND_MINOR=version
+-d:ByondMajor=int
+-d:ByondMinor=int
 ```
 
-By default they will be set to latest API version (defined in byondapi.nim)
+By default they will be set to latest API version (defined in byond_version.nim)
 
 Do not compile with -d: debug, call conventions won't work
 
