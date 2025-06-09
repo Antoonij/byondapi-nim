@@ -27,26 +27,26 @@ byondProc:
   proc meow(sun: ByondValue, sin: ByondValue, nonexists: ByondValue): ByondValue =
     discard threadSync(
       proc(): ByondValue = 
-        callGlobalProc("message_admins", [ByondValue.new("Hello from thread sync")])
+        callGlobalProc("message_admins", [ByondValue.init("Hello from thread sync")])
     )
 
-    discard callGlobalProc("message_admins", [ByondValue.new("start")])
+    discard callGlobalProc("message_admins", [ByondValue.init("start")])
 
     discard callGlobalProc("message_admins", [sun.readVar("name")])
     discard callGlobalProc("message_admins", [sin])
 
     let sinNum = sin.num()
 
-    discard callGlobalProc("message_admins", [ByondValue.new(sinNum)])
+    discard callGlobalProc("message_admins", [ByondValue.init(sinNum)])
 
-    discard callGlobalProc("message_admins", [ByondValue.new("end")])
+    discard callGlobalProc("message_admins", [ByondValue.init("end")])
     discard callGlobalProc("message_admins", [nonexists])
 
-    ByondValue.new()
+    ByondValue.init()
 
   # Call from byond example: call_ext("dllfile.dll", "byond:secondExported_ffi")(your args)
   proc secondExported(): ByondValue = 
-    ByondValue.new()
+    ByondValue.init()
 ```
 
 # How to compile your projects?

@@ -4,4 +4,4 @@ converter toCfloat*(src: ByondValue): cfloat =
     src.num
 
 converter toByondValue*(src: cfloat): ByondValue =
-    ByondValue.new(src)
+    ByondValue.init(src)

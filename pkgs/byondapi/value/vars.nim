@@ -1,12 +1,12 @@
 import ../../byondapi_raw/byondapi, ../error, value, constructor
 
 proc readVar*(loc {.byref.}: ByondValue, varname: string): ByondValue =
-  result = ByondValue.new()
+  result = ByondValue.init()
 
   handleByondError(Byond_ReadVar(addr loc, varname.cstring, addr result))
 
 proc readVar*(loc {.byref.}: ByondValue, varnameId: u4c): ByondValue =
-  result = ByondValue.new()
+  result = ByondValue.init()
 
   handleByondError(Byond_ReadVarByStrId(addr loc, varnameId, addr result))
   

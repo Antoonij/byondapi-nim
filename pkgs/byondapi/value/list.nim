@@ -49,7 +49,7 @@ proc readListIndex*(loc {.byref.}: ByondValue, idx: ByondValue): ByondValue =
   if not loc.isList():
     raise newException(ByondCallError, "List operation on non-list")
 
-  result = ByondValue.new()
+  result = ByondValue.init()
 
   handleByondError(Byond_ReadListIndex(addr loc, addr idx, addr result))
 
@@ -60,7 +60,7 @@ proc writeListIndex*(loc {.byref.}: ByondValue, idx: ByondValue, val: ByondValue
   handleByondError(Byond_WriteListIndex(addr loc, addr idx, addr val))
 
 proc locateIn*(src {.byref.}: ByondValue, listParam: ByondValue): Option[ByondValue] =
-  var wrappedResult = ByondValue.new()
+  var wrappedResult = ByondValue.init()
 
   handleByondError(Byond_LocateIn(addr src, addr listParam, addr wrappedResult))
 
@@ -70,7 +70,7 @@ proc locateIn*(src {.byref.}: ByondValue, listParam: ByondValue): Option[ByondVa
   some(wrappedResult)
 
 proc length*(src {.byref.}: ByondValue): ByondValue =
-  result = ByondValue.new()
+  result = ByondValue.init()
 
   handleByondError(Byond_Length(addr src, addr result))
 

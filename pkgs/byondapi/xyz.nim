@@ -20,7 +20,7 @@ proc getBlock*(corner1, corner2: ByondXYZ): seq[ByondValue] =
     result.setLen(actualLen)
 
 proc locateXYZ*(xyz {.byref.}: ByondXYZ): ByondValue =
-  result = ByondValue.new()
+  result = ByondValue.init()
 
   discard Byond_LocateXYZ(addr xyz, addr result)
 

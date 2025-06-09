@@ -9,7 +9,7 @@ proc fromRawPartsToSeq(argv: ptr ByondValue, argc: int, paramCount: int): seq[By
     copyMem(result[0].addr, argv, bytesToCopy)
 
   for i in argc ..< paramCount:
-    result[i] = ByondValue.new()
+    result[i] = ByondValue.init()
 
 macro byondProc*(body: untyped): untyped =
   if body.kind != nnkStmtList:
@@ -66,14 +66,14 @@ macro byondProc*(body: untyped): untyped =
 
     let wrapper = quote do:
       proc `ffiIdent`*(argc: u4c, argv: ptr ByondValue): ByondValue {.cdecl, dynlib, exportc: `ffiNameStr`.} =
-        result = ByondValue.new()
+        result = ByondValue.init()
         var `argsIdent` = fromRawPartsToSeq(argv, argc.int, `overallParams`)
     
         try:
           result = `clr`
 
         except CatchableError as err:
-          discard callGlobalProc("byondapi_stack_trace", [ByondValue.new("NIM FFI ERROR: " & $err.name & ": " & $err.msg)])
+          discard callGlobalProc("byondapi_stack_trace", [ByondValue.init("NIM FFI ERROR: " & $err.name & ": " & $err.msg)])
 
     output.add(wrapper)
 
