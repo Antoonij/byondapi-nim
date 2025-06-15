@@ -1,4 +1,4 @@
-import ../../byondapi_raw/byondapi, ../error
+import ../../byondapi_raw/byondapi, ../error, ../../byond_version
 
 type
     ByondValue* = CByondValue
@@ -8,6 +8,9 @@ proc isNum*(v {.byref.}: ByondValue): bool = ByondValue_IsNum(addr v)
 proc isStr*(v {.byref.}: ByondValue): bool = ByondValue_IsStr(addr v)
 proc isList*(v {.byref.}: ByondValue): bool = ByondValue_IsList(addr v)
 proc isTrue*(v {.byref.}: ByondValue): bool = ByondValue_IsTrue(addr v)
+
+when ByondVersion >= 516.1664:
+  proc isType*(src {.byref.}: ByondValue, typestr: string): bool = ByondValue_IsType(addr src, typestr.cstring)
 
 proc num*(v {.byref.}: ByondValue): cfloat = ByondValue_GetNum(addr v)
 proc `num=`*(v: var ByondValue, f: cfloat) = ByondValue_SetNum(addr v, f)

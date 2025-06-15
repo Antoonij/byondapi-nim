@@ -7,6 +7,14 @@ proc init*(typ: type ByondValue, str: string): ByondValue =
   result = ByondValue(xtype: STRING)
   result.setStr(str)
 
+proc init*(typ: type ByondValue, str: cstring): ByondValue =
+  result = ByondValue(xtype: STRING)
+  ByondValue_SetStr(addr result, str)
+
+proc init*(typ: type ByondValue, boolval: bool): ByondValue =
+  result = ByondValue(xtype: NUMBER)
+  result.num = if boolval: 1 else: 0
+
 proc init*(typ: type ByondValue, value: cfloat): ByondValue =
   result = ByondValue(xtype: NUMBER)
   result.num = value

@@ -1,4 +1,4 @@
-import ../error, ../../byondapi_raw/byondapi, constructor, value
+import ../error, ../../byondapi_raw/byondapi, constructor, value, ../../byond_version
 
 proc callProc*(src {.byref.}: ByondValue, name: string, args: openArray[ByondValue]): ByondValue =
   result = ByondValue.init()
@@ -15,3 +15,9 @@ proc callProc*(src {.byref.}: ByondValue, nameId: u4c, args: openArray[ByondValu
   let argPtr = if argCount > 0: addr args[0] else: nil
 
   handleByondError(Byond_CallProcByStrId(addr src, nameId, argPtr, argCount, addr result))
+
+when ByondVersion >= 516.1664:
+  proc returnProc*(src {.byref.}: ByondValue): ByondValue =
+    result = ByondValue.init()
+
+    handleByondError(Byond_Return(addr src, addr result))

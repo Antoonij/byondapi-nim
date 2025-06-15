@@ -2,7 +2,7 @@ import math
 
 const
     ByondMajor {.intdefine.} = 516
-    ByondMinor {.intdefine.} = 1651
+    ByondMinor {.intdefine.} = 1664
 
     MinorVersionStr = $ByondMinor
 

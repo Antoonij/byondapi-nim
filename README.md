@@ -23,7 +23,7 @@ import
 # Missing arguments will be replaced with null ByondValues.
 # Make sure to use the `byond:` prefix in call_ext because byondProc works only with ByondValues.
 byondProc:
-  # Call from byond example: call_ext("dllfile.dll", "byond:meow_ffi")(your args)
+  # Call from byond example: call_ext("file.dll/.so", "byond:meow_ffi")(your args)
   proc meow(sun: ByondValue, sin: ByondValue, nonexists: ByondValue): ByondValue =
     discard threadSync(
       proc(): ByondValue = 
@@ -44,9 +44,11 @@ byondProc:
 
     ByondValue.init()
 
-  # Call from byond example: call_ext("dllfile.dll", "byond:secondExported_ffi")(your args)
-  proc secondExported(): ByondValue = 
-    ByondValue.init()
+# Same as byondProc, but first parameter should be sleeping proc
+byondAsyncProc:
+  # Call from byond example: call_ext("file.dll/.so", "byond,await:secondExported_ffi")(your args)
+  proc secondExported(sleepy: ByondValue, something: ByondValue): void = 
+    discard returnProc(sleepy)
 ```
 
 # How to compile your projects?

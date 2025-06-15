@@ -114,6 +114,8 @@ proc ByondValue_IsList*(v: ptr CByondValue): bool
 
 proc ByondValue_IsTrue*(v: ptr CByondValue): bool
 
+proc ByondValue_IsType*(src: ptr CByondValue, typestr: cstring): bool
+
 proc ByondValue_GetNum*(v: ptr CByondValue): cfloat
 
 proc ByondValue_GetRef*(v: ptr CByondValue): u4c
@@ -165,6 +167,8 @@ proc Byond_CallProcByStrId*(src: ptr CByondValue, nameId: u4c, arg: ptr CByondVa
 proc Byond_CallGlobalProc*(name: cstring, arg: ptr CByondValue, arg_count: u4c, result: ptr CByondValue): bool
 
 proc Byond_CallGlobalProcByStrId*(nameId: u4c, arg: ptr CByondValue, arg_count: u4c, result: ptr CByondValue): bool
+
+proc Byond_Return*(procedure: ptr CByondValue, retval: ptr CByondValue): bool
 
 proc Byond_ToString*(src: ptr CByondValue, buf: cstring, buflen: var u4c): bool
 
