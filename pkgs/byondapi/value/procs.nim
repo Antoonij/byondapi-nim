@@ -16,8 +16,7 @@ proc callProc*(src {.byref.}: ByondValue, nameId: u4c, args: openArray[ByondValu
 
   handleByondError(Byond_CallProcByStrId(addr src, nameId, argPtr, argCount, addr result))
 
-when ByondVersion >= 516.1664:
-  proc returnProc*(src {.byref.}: ByondValue): ByondValue =
-    result = ByondValue.init()
+proc returnProc*(src {.byref.}: ByondValue): ByondValue {.byond(516.1664).} =
+  result = ByondValue.init()
 
-    handleByondError(Byond_Return(addr src, addr result))
+  handleByondError(Byond_Return(addr src, addr result))

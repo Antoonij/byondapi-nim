@@ -3,8 +3,7 @@ import ../byondapi_raw/byondapi, std/options, ../byond_version
 type
   ByondCallError* = object of CatchableError
 
-when ByondVersion >= 516:
-  proc crash*(message: string) = Byond_CRASH(message.cstring)
+proc crash*(message: string) {.byond(516).} = Byond_CRASH(message.cstring)
 
 proc getLastError*(): Option[string] = 
   let str = Byond_LastError()

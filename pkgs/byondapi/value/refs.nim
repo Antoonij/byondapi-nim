@@ -4,8 +4,7 @@ proc incRef*(src {.byref.}: ByondValue) = ByondValue_IncRef(addr src)
 
 proc decRef*(src {.byref.}: ByondValue) = ByondValue_DecRef(addr src)
 
-when ByondVersion >= 516.1651:
-  proc decTempRef*(src {.byref.}: ByondValue) = ByondValue_DecTempRef(addr src)
+proc decTempRef*(src {.byref.}: ByondValue) {.byond(516.1651).} = ByondValue_DecTempRef(addr src)
 
 proc testRef*(src: var ByondValue): bool = Byond_TestRef(addr src)
 

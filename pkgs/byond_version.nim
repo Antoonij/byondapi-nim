@@ -7,3 +7,7 @@ const
     MinorVersionStr = $ByondMinor
 
     ByondVersion* = float(ByondMajor) + float(ByondMinor) / pow(10.0, float(MinorVersionStr.len))
+
+template byond*(version: float, def: untyped): untyped = 
+    when ByondVersion >= version:
+        `def`
