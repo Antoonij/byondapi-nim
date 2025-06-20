@@ -48,7 +48,7 @@ byondProc:
 byondAsyncProc:
   # Call from byond example: call_ext("file.dll/.so", "byond,await:secondExported_ffi")(your args)
   proc secondExported(sleepy: ByondValue, something: ByondValue): void = 
-    discard returnProc(sleepy)
+    returnProc(sleepy, ByondValue.init(1984))
 ```
 
 # How to compile your projects?

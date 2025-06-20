@@ -10,7 +10,7 @@ proc trampoline*(data: pointer): ByondValue {.cdecl.} =
 
 proc threadSync*(fn: proc(): ByondValue {.closure, gcsafe.};
                 blockParam = false): ByondValue =
-  let cd = CallbackData(cb: fn)
+  let cd: owned CallbackData = CallbackData(cb: fn)
   let xptr = cast[pointer](cd)
 
   Byond_ThreadSync(trampoline, xptr, blockParam)

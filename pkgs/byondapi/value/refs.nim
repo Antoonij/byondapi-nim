@@ -28,5 +28,5 @@ proc `=copy`*(dest: var TracedByondValue, src: TracedByondValue) =
   dest.incRef()
 
 converter toTraced*(src: ByondValue): TracedByondValue =
+  result = TracedByondValue(inner: src)
   src.incRef()
-  TracedByondValue(inner: src)

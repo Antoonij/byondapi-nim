@@ -16,7 +16,5 @@ proc callProc*(src {.byref.}: ByondValue, nameId: u4c, args: openArray[ByondValu
 
   handleByondError(Byond_CallProcByStrId(addr src, nameId, argPtr, argCount, addr result))
 
-proc returnProc*(src {.byref.}: ByondValue): ByondValue {.byond(516.1664).} =
-  result = ByondValue.init()
-
-  handleByondError(Byond_Return(addr src, addr result))
+proc returnProc*(src {.byref.}: ByondValue, retval: ByondValue): void {.byond(516.1664).} =
+  handleByondError(Byond_Return(addr src, addr retval))
