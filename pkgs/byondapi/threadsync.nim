@@ -8,11 +8,11 @@ proc trampoline*(data: pointer): ByondValue {.cdecl.} =
   let cd = cast[ptr CallbackData](data)
   result = cd.cb()
 
-  dealloc(cd)
+  deallocShared(cd)
 
 proc threadSync*(fn: proc(): ByondValue {.closure, gcsafe.};
                  blockParam = false): ByondValue =
-  let cd = cast[ptr CallbackData](alloc0(sizeof(CallbackData)))
+  let cd = cast[ptr CallbackData](allocShared(sizeof(CallbackData)))
   cd.cb = fn
 
   let xptr = cast[pointer](cd)
