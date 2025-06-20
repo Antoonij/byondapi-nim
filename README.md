@@ -30,16 +30,12 @@ byondProc:
         callGlobalProc("message_admins", [ByondValue.init("Hello from thread sync")])
     )
 
-    discard callGlobalProc("message_admins", [ByondValue.init("start")])
-
     discard callGlobalProc("message_admins", [sun.readVar("name")])
     discard callGlobalProc("message_admins", [sin])
 
     let sinNum = sin.num()
 
     discard callGlobalProc("message_admins", [ByondValue.init(sinNum)])
-
-    discard callGlobalProc("message_admins", [ByondValue.init("end")])
     discard callGlobalProc("message_admins", [nonexists])
 
     ByondValue.init()
