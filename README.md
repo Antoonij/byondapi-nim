@@ -1,7 +1,7 @@
 # ByondAPI-nim
 Nim bindings for interacting with ByondAPI.
 
-Currently, not all bindings have been tested, so full functionality is not guaranteed.
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Antoonij/byondapi-nim)
 
 # How to install
 
