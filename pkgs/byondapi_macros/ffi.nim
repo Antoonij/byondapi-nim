@@ -1,4 +1,10 @@
-import macros, typetraits, ../byondapi_raw/byondapi, ../byondapi/global_proc, strutils, ../byondapi/value/[value, constructor]
+import 
+  macros, 
+  typetraits, 
+  ../byondapi_raw/byondapi, 
+  ../byondapi/[global_proc, strings], 
+  strutils, 
+  ../byondapi/value/[value, constructor]
 
 proc fromRawPartsToSeq(argv: ptr ByondValue, argc: int, paramCount: int): seq[ByondValue] =
   result = newSeq[ByondValue](paramCount)
@@ -73,7 +79,7 @@ macro byondProc*(body: untyped): untyped =
           result = `clr`
 
         except CatchableError as err:
-          discard callGlobalProc("byondapi_stack_trace", [ByondValue.init(err.msg)])
+          discard callGlobalProc("byondapi_stack_trace".strId(), [ByondValue.init(err.msg)])
 
     output.add(wrapper)
 
@@ -145,7 +151,7 @@ macro byondAsyncProc*(body: untyped): untyped =
           `clr`
 
         except CatchableError as err:
-          discard callGlobalProc("byondapi_stack_trace", [ByondValue.init(err.msg)])
+          discard callGlobalProc("byondapi_stack_trace".strId(), [ByondValue.init(err.msg)])
 
     output.add(wrapper)
 

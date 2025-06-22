@@ -3,7 +3,7 @@ Nim bindings for interacting with ByondAPI.
 
 Currently, not all bindings have been tested, so full functionality is not guaranteed.
 
-# How to install?
+# How to install
 
 ```bash
 git clone https://github.com/Antoonij/byondapi-nim.git
@@ -17,7 +17,8 @@ and add dep to your .nimble file
 requires "byondapi"
 ```
 
-# How to use?
+# How to use
+
 ```
 import 
   byondapi_macros/ffi, # byondProc macro
@@ -53,7 +54,7 @@ byondAsyncProc:
     returnProc(sleepy, ByondValue.init(1984))
 ```
 
-# How to compile your projects?
+# How to compile your projects
 
 ### Windows target
 ```bash
