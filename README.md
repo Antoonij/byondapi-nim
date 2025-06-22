@@ -11,6 +11,12 @@ cd byondapi-nim
 nimble install
 ```
 
+and add dep to your .nimble file
+
+```
+requires "byondapi"
+```
+
 # How to use?
 ```
 import 
