@@ -5,16 +5,14 @@ type
     cb*: proc(): ByondValue {.closure, gcsafe.}
 
 proc trampoline*(data: pointer): ByondValue {.cdecl.} =
+  defer: deallocShared(data)
   let cd = cast[ptr CallbackData](data)
+  
   result = cd.cb()
-
-  deallocShared(cd)
 
 proc threadSync*(fn: proc(): ByondValue {.closure, gcsafe.};
                  blockParam = false): ByondValue =
-  let cd = cast[ptr CallbackData](allocShared(sizeof(CallbackData)))
+  let cd = CallbackData.createSharedU()
   cd.cb = fn
 
-  let xptr = cast[pointer](cd)
-
-  Byond_ThreadSync(trampoline, xptr, blockParam)
+  Byond_ThreadSync(trampoline, cd, blockParam)
