@@ -14,10 +14,9 @@ proc getLastError*(): Option[string] =
   some($str)
 
 template handleByondError*(fn: untyped): untyped =
-  block:
-    let callResult = fn
+  let callResult {.gensym.} = fn
 
-    if not callResult:
-      let lastErr = getLastError()
+  if not callResult:
+    let lastErr {.gensym.} = getLastError()
 
-      raise newException(ByondCallError, if lastErr.isSome: lastErr.get() else: "Unknown error")
+    raise newException(ByondCallError, if lastErr.isSome: lastErr.get() else: "Unknown error")
