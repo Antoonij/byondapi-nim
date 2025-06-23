@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.2"
+version       = "0.1.3"
 author        = "Antoonij"
 description   = "Nim bindings for byondapi"
 license       = "MIT"

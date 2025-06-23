@@ -4,19 +4,22 @@ proc readList*(loc {.byref.}: ByondValue): seq[ByondValue] =
   if not loc.isList():
     raise newException(ByondCallError, "List operation on non-list")
 
-  var len: u4c = 0
-  handleByondError(Byond_ReadList(addr loc, nil, len))
+  var listBuf {.threadvar, global, gensym.}: seq[ByondValue]
 
-  if len == 0:
-    return @[]
+  if listBuf.len == 0:
+    listBuf.setLen(1)
 
-  result = newSeq[ByondValue](len)
-  var actualLen = len
+  var len = listBuf.len.u4c
+  let callResult = Byond_ReadList(addr loc, addr listBuf[0], addr len)
 
-  handleByondError(Byond_ReadList(addr loc, addr result[0], actualLen))
+  if not callResult and len > 0:
+    listBuf.setLen(len.int)
+    handleByondError(Byond_ReadList(addr loc, addr listBuf[0], addr len))
 
-  if actualLen < len:
-    result.setLen(actualLen)
+  elif not callResult and len == 0:
+    raise newException(ByondCallError, "ReadList failed with length 0")
+
+  listBuf[0 ..< len.int]
 
 proc writeList*(loc {.byref.}: ByondValue, items: seq[ByondValue]) =
   if not loc.isList():
@@ -31,19 +34,22 @@ proc readListAssoc*(loc {.byref.}: ByondValue): seq[ByondValue] =
   if not loc.isList():
     raise newException(ByondCallError, "List operation on non-list")
 
-  var len: u4c = 0
-  handleByondError(Byond_ReadListAssoc(addr loc, nil, len))
+  var assocBuf {.threadvar, global, gensym.}: seq[ByondValue]
 
-  if len == 0:
-    return @[]
+  if assocBuf.len == 0:
+    assocBuf.setLen(1)
 
-  result = newSeq[ByondValue](len)
-  var actualLen = len
-  
-  handleByondError(Byond_ReadListAssoc(addr loc, addr result[0], actualLen))
+  var len = assocBuf.len.u4c
+  let callResult = Byond_ReadListAssoc(addr loc, addr assocBuf[0], addr len)
 
-  if actualLen < len:
-    result.setLen(actualLen)
+  if not callResult and len > 0:
+    assocBuf.setLen(len.int)
+    handleByondError(Byond_ReadListAssoc(addr loc, addr assocBuf[0], addr len))
+
+  elif not callResult and len == 0:
+    raise newException(ByondCallError, "ReadListAssoc failed with length 0")
+
+  assocBuf[0 ..< len.int]
 
 proc readListIndex*(loc {.byref.}: ByondValue, idx: ByondValue): ByondValue =
   if not loc.isList():

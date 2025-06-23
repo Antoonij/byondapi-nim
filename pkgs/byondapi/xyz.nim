@@ -4,20 +4,22 @@ type
     ByondXYZ* = CByondXYZ
 
 proc getBlock*(corner1, corner2: ByondXYZ): seq[ByondValue] =
-  var len: u4c = 0
+  var blockBuf {.threadvar, global, gensym.}: seq[ByondValue]
 
-  handleByondError(Byond_Block(addr corner1, addr corner2, nil, len))
+  if blockBuf.len == 0:
+    blockBuf.setLen(1)
 
-  if len == 0:
-    return @[]
+  var len = blockBuf.len.u4c
+  let callResult = Byond_Block(addr corner1, addr corner2, addr blockBuf[0], addr len)
 
-  result = newSeq[ByondValue](len)
-  var actualLen = len
+  if not callResult and len > 0:
+    blockBuf.setLen(len.int)
+    handleByondError(Byond_Block(addr corner1, addr corner2, addr blockBuf[0],  addr len))
 
-  handleByondError(Byond_Block(addr corner1, addr corner2, addr result[0], actualLen))
+  elif not callResult and len == 0:
+    raise newException(ByondCallError, "Byond_Block failed with length 0")
 
-  if actualLen < len:
-    result.setLen(actualLen)
+  blockBuf[0 ..< len.int]
 
 proc locateXYZ*(xyz {.byref.}: ByondXYZ): ByondValue =
   result = ByondValue.init()

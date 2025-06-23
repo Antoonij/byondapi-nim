@@ -35,18 +35,20 @@ proc getString*(src {.byref.}: ByondValue): string =
   if not src.isStr():
     raise newException(ByondCallError, "Cannot get string from non-string value.")
 
-  var buflen: u4c = 0
+  var strbuf {.threadvar, global, gensym.}: seq[char]
+  
+  if strbuf.len == 0:
+    strbuf.setLen(1)
 
-  handleByondError(Byond_ToString(addr src, nil, buflen))
+  var strbuflen = strbuf.len.u4c
 
-  if buflen == 0:
-    return ""
+  let callResult = Byond_ToString(addr src, cast[cstring](addr strbuf[0]), addr strbuflen)
 
-  let raw = alloc(buflen)
-  defer: dealloc(raw)
+  if not callResult and strbuflen > 0:
+    strbuf.setLen(strbuflen.int + 1)
+    handleByondError(Byond_ToString(addr src, cast[cstring](addr strbuf[0]), addr strbuflen))
+    
+  elif not callResult and strbuflen == 0:
+    raise newException(ByondCallError, "ToString failed: returned 0 and error")
 
-  let buffer = cast[cstring](raw)
-
-  handleByondError(Byond_ToString(addr src, buffer, buflen))
-
-  $buffer
+  strbuf.substr()

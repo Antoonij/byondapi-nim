@@ -95,7 +95,7 @@ const
 
 proc Byond_LastError*(): cstring
 
-proc Byond_GetVersion*(version: var u4c, build: var u4c)
+proc Byond_GetVersion*(version: ptr u4c, build: ptr u4c)
 
 proc Byond_GetDMBVersion*(): u4c
 
@@ -146,11 +146,11 @@ proc Byond_WriteVarByStrId*(loc: ptr CByondValue, varnameId: u4c, val: ptr CByon
 
 proc Byond_CreateList*(result: ptr CByondValue): bool
 
-proc Byond_ReadList*(loc: ptr CByondValue, listItems: ptr CByondValue, len: var u4c): bool
+proc Byond_ReadList*(loc: ptr CByondValue, listItems: ptr CByondValue, len: ptr u4c): bool
 
 proc Byond_WriteList*(loc: ptr CByondValue, listItems: ptr CByondValue, len: u4c): bool
 
-proc Byond_ReadListAssoc*(loc: ptr CByondValue, listItems: ptr CByondValue, len: var u4c): bool
+proc Byond_ReadListAssoc*(loc: ptr CByondValue, listItems: ptr CByondValue, len: ptr u4c): bool
 
 proc Byond_ReadListIndex*(loc: ptr CByondValue, idx: ptr CByondValue, result: ptr CByondValue): bool
 
@@ -170,9 +170,9 @@ proc Byond_CallGlobalProcByStrId*(nameId: u4c, arg: ptr CByondValue, arg_count: 
 
 proc Byond_Return*(procedure: ptr CByondValue, retval: ptr CByondValue): bool
 
-proc Byond_ToString*(src: ptr CByondValue, buf: cstring, buflen: var u4c): bool
+proc Byond_ToString*(src: ptr CByondValue, buf: cstring, buflen: ptr u4c): bool
 
-proc Byond_Block*(corner1: ptr CByondXYZ, corner2: ptr CByondXYZ, listItems: ptr CByondValue, len: var u4c): bool
+proc Byond_Block*(corner1: ptr CByondXYZ, corner2: ptr CByondXYZ, listItems: ptr CByondValue, len: ptr u4c): bool
 
 proc Byond_Length*(src: ptr CByondValue, result: ptr CByondValue): bool
 
