@@ -1,15 +1,17 @@
 import 
-  macros, 
+  macros,
   ../byondapi_raw/byondapi, 
   ../byondapi/[global_proc, strings, error],
   ../byondapi/value/[value, constructor]
 
+const maxParamCount = 128
+
 # Unsafest thing, but fast. Only for data copy.
 proc fromRawPartsToSeq(argv: ptr ByondValue, argc: int, paramCount: int): lent seq[ByondValue] =
   var cache {.global, threadvar, gensym.}: seq[ByondValue]
-  cache.setLen(paramCount)
+  cache.setLen(maxParamCount)
 
-  if not argv.isNil:
+  if not argv.isNil and paramCount > 0:
     let count = min(argc, paramCount)
     let bytesToCopy = count * sizeof(ByondValue)
     copyMem(cache[0].addr, argv, bytesToCopy)
@@ -70,7 +72,7 @@ macro byondProc*(body: untyped): untyped =
       clr.add(expre)
       i.inc
 
-    var overallParams = newLit(i)
+    let overallParams = newLit(i)
 
     let wrapper = quote do:
       proc `ffiIdent`*(argc: u4c, argv: ptr ByondValue): ByondValue {.cdecl, dynlib, exportc: `ffiNameStr`.} =
@@ -147,7 +149,7 @@ macro byondAsyncProc*(body: untyped): untyped =
       expre.add(argsIdent, newLit(paramIdx - 2))
       clr.add(expre)
     
-    var overallParams = newLit(i - 1)
+    let overallParams = newLit(i - 1)
 
     let wrapper = quote do:
       proc `ffiIdent`*(argc: u4c, argv: ptr ByondValue, `sleepingProcIdent`: ByondValue): void {.cdecl, dynlib, exportc: `ffiNameStr`.} =
