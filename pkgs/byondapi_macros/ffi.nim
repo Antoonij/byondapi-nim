@@ -5,15 +5,20 @@ import
   ../byondapi/value/[value, constructor]
 
 proc fromRawPartsToSeq(argv: ptr ByondValue, argc: int, paramCount: int): seq[ByondValue] =
-  result = newSeq[ByondValue](paramCount)
+  var cache {.global, threadvar, gensym.}: seq[ByondValue]
 
-  if not argv.isNil and argc > 0:
+  if cache.len <= paramCount:
+    cache.setLen(paramCount + 2)
+
+  if not argv.isNil:
     let count = min(argc, paramCount)
     let bytesToCopy = count * sizeof(ByondValue)
-    copyMem(result[0].addr, argv, bytesToCopy)
+    copyMem(cache[0].addr, argv, bytesToCopy)
 
   for i in argc ..< paramCount:
-    result[i] = ByondValue.init()
+    cache[i] = ByondValue.init()
+
+  cache
 
 macro byondProc*(body: untyped): untyped =
   if body.kind != nnkStmtList:
@@ -72,15 +77,16 @@ macro byondProc*(body: untyped): untyped =
       proc `ffiIdent`*(argc: u4c, argv: ptr ByondValue): ByondValue {.cdecl, dynlib, exportc: `ffiNameStr`.} =
         result = ByondValue.init()
         let `argsIdent` = fromRawPartsToSeq(argv, argc.int, `overallParams`)
+        let exceptionLogger = "byondapi_stack_trace".strId()
     
         try:
           result = `clr`
 
         except ByondCallError as err:
-          discard callGlobalProc("byondapi_stack_trace".strId(), [ByondValue.init(err.cstrmsg)])
+          discard callGlobalProc(exceptionLogger, [ByondValue.init(err.cstrmsg)])
 
         except CatchableError as err:
-          discard callGlobalProc("byondapi_stack_trace".strId(), [ByondValue.init(err.msg)])
+          discard callGlobalProc(exceptionLogger, [ByondValue.init(err.msg)])
 
     output.add(wrapper)
 
@@ -147,15 +153,16 @@ macro byondAsyncProc*(body: untyped): untyped =
     let wrapper = quote do:
       proc `ffiIdent`*(argc: u4c, argv: ptr ByondValue, `sleepingProcIdent`: ByondValue): void {.cdecl, dynlib, exportc: `ffiNameStr`.} =
         let `argsIdent` = fromRawPartsToSeq(argv, argc.int, `overallParams`)
-    
+        let exceptionLogger = "byondapi_stack_trace".strId()
+
         try:
           `clr`
 
         except ByondCallError as err:
-          discard callGlobalProc("byondapi_stack_trace".strId(), [ByondValue.init(err.cstrmsg)])
+          discard callGlobalProc(exceptionLogger, [ByondValue.init(err.cstrmsg)])
 
         except CatchableError as err:
-          discard callGlobalProc("byondapi_stack_trace".strId(), [ByondValue.init(err.msg)])
+          discard callGlobalProc(exceptionLogger, [ByondValue.init(err.msg)])
 
     output.add(wrapper)
 
