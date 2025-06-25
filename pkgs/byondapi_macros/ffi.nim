@@ -4,11 +4,10 @@ import
   ../byondapi/[global_proc, strings, error],
   ../byondapi/value/[value, constructor]
 
-proc fromRawPartsToSeq(argv: ptr ByondValue, argc: int, paramCount: int): seq[ByondValue] =
+# Unsafest thing, but fast. Only for data copy.
+proc fromRawPartsToSeq(argv: ptr ByondValue, argc: int, paramCount: int): lent seq[ByondValue] =
   var cache {.global, threadvar, gensym.}: seq[ByondValue]
-
-  if cache.len <= paramCount:
-    cache.setLen(paramCount + 2)
+  cache.setLen(paramCount)
 
   if not argv.isNil:
     let count = min(argc, paramCount)

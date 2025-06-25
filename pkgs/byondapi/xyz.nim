@@ -5,9 +5,7 @@ type
 
 proc getBlock*(corner1, corner2: ByondXYZ): seq[ByondValue] =
   var blockBuf {.threadvar, global, gensym.}: seq[ByondValue]
-
-  if blockBuf.len == 0:
-    blockBuf.setLen(1)
+  blockBuf.setLen(1)
 
   var len = blockBuf.len.u4c
   let callResult = Byond_Block(addr corner1, addr corner2, addr blockBuf[0], addr len)
@@ -19,7 +17,8 @@ proc getBlock*(corner1, corner2: ByondXYZ): seq[ByondValue] =
   elif not callResult and len == 0:
     raise newException(ByondCallError, "Byond_Block failed with length 0")
 
-  blockBuf[0 ..< len.int]
+  result = newSeq[ByondValue](blockbuf.len)
+  copyMem(result[0].addr, blockBuf[0].addr, blockbuf.len * sizeof(ByondValue))
 
 proc locateXYZ*(xyz {.byref.}: ByondXYZ): ByondValue =
   result = ByondValue.init()

@@ -5,9 +5,7 @@ proc readList*(loc {.byref.}: ByondValue): seq[ByondValue] =
     raise newException(ByondCallError, "List operation on non-list")
 
   var listBuf {.threadvar, global, gensym.}: seq[ByondValue]
-
-  if listBuf.len == 0:
-    listBuf.setLen(1)
+  listBuf.setLen(1)
 
   var len = listBuf.len.u4c
   let callResult = Byond_ReadList(addr loc, addr listBuf[0], addr len)
@@ -19,7 +17,8 @@ proc readList*(loc {.byref.}: ByondValue): seq[ByondValue] =
   elif not callResult and len == 0:
     raise newException(ByondCallError, "ReadList failed with length 0")
 
-  listBuf[0 ..< len.int]
+  result = newSeq[ByondValue](listBuf.len)
+  copyMem(result[0].addr, listBuf[0].addr, listbuf.len * sizeof(ByondValue))
 
 proc writeList*(loc {.byref.}: ByondValue, items: seq[ByondValue]) =
   if not loc.isList():
@@ -35,9 +34,7 @@ proc readListAssoc*(loc {.byref.}: ByondValue): seq[ByondValue] =
     raise newException(ByondCallError, "List operation on non-list")
 
   var assocBuf {.threadvar, global, gensym.}: seq[ByondValue]
-
-  if assocBuf.len == 0:
-    assocBuf.setLen(1)
+  assocBuf.setLen(1)
 
   var len = assocBuf.len.u4c
   let callResult = Byond_ReadListAssoc(addr loc, addr assocBuf[0], addr len)
@@ -49,7 +46,8 @@ proc readListAssoc*(loc {.byref.}: ByondValue): seq[ByondValue] =
   elif not callResult and len == 0:
     raise newException(ByondCallError, "ReadListAssoc failed with length 0")
 
-  assocBuf[0 ..< len.int]
+  result = newSeq[ByondValue](assocBuf.len)
+  copyMem(result[0].addr, assocBuf[0].addr, assocBuf.len * sizeof(ByondValue))
 
 proc readListIndex*(loc {.byref.}: ByondValue, idx: ByondValue): ByondValue =
   if not loc.isList():
