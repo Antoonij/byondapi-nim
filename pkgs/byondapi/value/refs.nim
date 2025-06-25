@@ -1,12 +1,16 @@
 import value, ../error, ../../byondapi_raw/byondapi, ../../byond_version
 
-proc incRef*(src {.byref.}: ByondValue) = ByondValue_IncRef(addr src)
+proc incRef*(src {.byref.}: ByondValue) {.inline.} = 
+  ByondValue_IncRef(addr src)
 
-proc decRef*(src {.byref.}: ByondValue) = ByondValue_DecRef(addr src)
+proc decRef*(src {.byref.}: ByondValue) {.inline.} = 
+  ByondValue_DecRef(addr src)
 
-proc decTempRef*(src {.byref.}: ByondValue) {.byond(516.1651).} = ByondValue_DecTempRef(addr src)
+proc decTempRef*(src {.byref.}: ByondValue) {.byond(516.1651), inline.} = 
+  ByondValue_DecTempRef(addr src)
 
-proc testRef*(src: var ByondValue): bool = Byond_TestRef(addr src)
+proc testRef*(src: var ByondValue): bool {.inline.} = 
+  Byond_TestRef(addr src)
 
 proc refcount*(src {.byref.}: ByondValue): u4c =
   result = 0

@@ -6,4 +6,5 @@ proc getVersion*(): (u4c, u4c) =
 
   (major, build)
 
-proc getDmbVersion*(): u4c = Byond_GetDMBVersion()
+proc getDmbVersion*(): u4c {.inline.} = 
+  Byond_GetDMBVersion()

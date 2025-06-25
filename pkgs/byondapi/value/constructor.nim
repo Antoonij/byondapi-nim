@@ -3,13 +3,12 @@ import value, ../type_tag, ../../byondapi_raw/byondapi, ../error, ../strings
 proc init*(typ: type ByondValue): ByondValue = 
   ByondValue(xtype: NULL)
 
-proc init*(typ: type ByondValue, str: string): ByondValue =
+proc init*(typ: type ByondValue, str: cstring): ByondValue =
   result = ByondValue(xtype: STRING)
   result.setStr(str)
 
-proc init*(typ: type ByondValue, str: cstring): ByondValue =
-  result = ByondValue(xtype: STRING)
-  ByondValue_SetStr(addr result, str)
+template init*(typ: type ByondValue, str: string): ByondValue =
+  typ.init(str.cstring)
 
 proc init*(typ: type ByondValue, boolval: bool): ByondValue =
   result = ByondValue(xtype: NUMBER)

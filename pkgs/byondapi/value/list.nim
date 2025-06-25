@@ -80,4 +80,4 @@ proc length*(src {.byref.}: ByondValue): ByondValue =
 
   handleByondError(Byond_Length(addr src, addr result))
 
-proc len*(src {.byref.}: ByondValue): cfloat = src.length().num
+proc len*(src {.byref.}: ByondValue): cfloat {.inline.} = src.length().num
