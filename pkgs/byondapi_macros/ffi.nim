@@ -4,48 +4,34 @@ import
   ../byondapi/[global_proc, strings, error],
   ../byondapi/value/[value, constructor]
 
-const maxParamCount = 128
-
-# Unsafest thing, but fast. Only for data copy.
-proc fromRawPartsToSeq(argv: ptr ByondValue, argc: int, paramCount: int): lent seq[ByondValue] =
-  var cache {.global, threadvar, gensym.}: seq[ByondValue]
-  if cache.len == 0: cache.setLen(maxParamCount)
-
-  if not argv.isNil and paramCount > 0:
-    let count = min(argc, paramCount)
-    let bytesToCopy = count * sizeof(ByondValue)
-    copyMem(cache[0].addr, argv, bytesToCopy)
-
-  for i in argc ..< paramCount:
-    cache[i] = ByondValue.init()
-
-  cache
+template toSafeArray(argv: ptr UncheckedArray[ByondValue]): ptr UncheckedArray[ByondValue] =
+  var arr {.gensym.}: array[0, ByondValue]
+  if argv.isNil: cast[ptr UncheckedArray[ByondValue]](addr arr) else: argv
 
 macro byondProc*(body: untyped): untyped =
   result = newStmtList()
 
   let ffiNameStr = $body.name & "_ffi"
-  let ffiIdent= ident(ffiNameStr)
+  let ffiIdent = ident(ffiNameStr)
 
   result.add(body)
 
   let clr: NimNode = newNimNode(nnkCall)
   clr.add(body.name)
+  
+  let argsIdent = ident("argValues")
+  let argCount = ident("argCount")
 
-  var i = body.params.len - 1
-  let argsIdent = ident("argsToProc")
-
-  for paramIdx in 1..i:
-    var expre = newNimNode(nnkBracketExpr)
-    expre.add(argsIdent, newLit(paramIdx - 1))
-    clr.add(expre)
-
-  let overallParams = newLit(i)
+  for paramIdx in 0 ..< body.params.len - 1:
+    clr.add(quote do:
+      if `argCount`.int >= `paramIdx`: `argsIdent`[`paramIdx`] else: ByondValue.init()
+    )
 
   let wrapper = quote do:
-    proc `ffiIdent`*(argc: u4c, argv: ptr ByondValue): ByondValue {.cdecl, dynlib, exportc.} =
+    proc `ffiIdent`*(`argCount`: u4c, argv: ptr UncheckedArray[ByondValue]): ByondValue {.cdecl, dynlib, exportc.} =
       result = ByondValue.init()
-      let `argsIdent` = fromRawPartsToSeq(argv, argc.int, `overallParams`)
+
+      let `argsIdent` = argv.toSafeArray()
       let exceptionLogger = "byondapi_stack_trace".strId()
     
       try:
@@ -73,19 +59,19 @@ macro byondAsyncProc*(body: untyped): untyped =
   let sleepingProcIdent = ident("sleepingProc")
   clr.add(sleepingProcIdent)
 
-  let i = body.params.len - 1
-  let argsIdent = ident("argsToProc")
+  let argsIdent = ident("argValues")
+  let argCount = ident("argCount")
 
-  for paramIdx in 2..i:
-    var expre = newNimNode(nnkBracketExpr)
-    expre.add(argsIdent, newLit(paramIdx - 2))
-    clr.add(expre)
-    
-  let overallParams = newLit(i - 1)
+  for paramIdx in 1 ..< body.params.len - 1:
+    let idx = paramIdx - 1
+
+    clr.add(quote do:
+      if `argCount`.int >= `paramIdx`: `argsIdent`[`idx`] else: ByondValue.init()
+    )
 
   let wrapper = quote do:
-    proc `ffiIdent`*(argc: u4c, argv: ptr ByondValue, `sleepingProcIdent`: ByondValue): void {.cdecl, dynlib, exportc.} =
-      let `argsIdent` = fromRawPartsToSeq(argv, argc.int, `overallParams`)
+    proc `ffiIdent`*(`argCount`: u4c, argv: ptr UncheckedArray[ByondValue], `sleepingProcIdent`: ByondValue): void {.cdecl, dynlib, exportc.} =
+      let `argsIdent` = argv.toSafeArray()
       let exceptionLogger = "byondapi_stack_trace".strId()
 
       try:

@@ -6,7 +6,7 @@ converter toCfloat*(src: ByondValue): cfloat {.inline.} =
 converter toByondValue*(src: cfloat): ByondValue {.inline.} =
     ByondValue.init(src)
 
-converter toString*(src {.byref.}: ByondValue): string =
+converter toString*(src: ByondValue): string =
   if not src.isStr():
     raise newException(ByondCallError, "Cannot get string from non-string value.")
 
