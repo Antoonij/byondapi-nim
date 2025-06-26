@@ -24,7 +24,7 @@ macro byondProc*(body: untyped): untyped =
 
   for paramIdx in 0 ..< body.params.len - 1:
     clr.add(quote do:
-      if `argCount`.int >= `paramIdx`: `argsIdent`[`paramIdx`] else: ByondValue.init()
+      if `argCount`.int > `paramIdx`: `argsIdent`[`paramIdx`] else: ByondValue.init()
     )
 
   let wrapper = quote do:
@@ -66,7 +66,7 @@ macro byondAsyncProc*(body: untyped): untyped =
     let idx = paramIdx - 1
 
     clr.add(quote do:
-      if `argCount`.int >= `paramIdx`: `argsIdent`[`idx`] else: ByondValue.init()
+      if `argCount`.int > `idx`: `argsIdent`[`idx`] else: ByondValue.init()
     )
 
   let wrapper = quote do:
