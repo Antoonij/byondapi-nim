@@ -11,7 +11,7 @@ converter toString*(src {.byref.}: ByondValue): string =
     raise newException(ByondCallError, "Cannot get string from non-string value.")
 
   var strbuf {.threadvar, global, gensym.}: seq[char]
-  strbuf.setLen(1)
+  if strbuf.len == 0: strbuf.setLen(1)
 
   var strbuflen = strbuf.len.u4c
   let callResult = Byond_ToString(addr src, cast[cstring](addr strbuf[0]), addr strbuflen)

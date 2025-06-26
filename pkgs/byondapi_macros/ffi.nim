@@ -9,7 +9,7 @@ const maxParamCount = 128
 # Unsafest thing, but fast. Only for data copy.
 proc fromRawPartsToSeq(argv: ptr ByondValue, argc: int, paramCount: int): lent seq[ByondValue] =
   var cache {.global, threadvar, gensym.}: seq[ByondValue]
-  cache.setLen(maxParamCount)
+  if cache.len == 0: cache.setLen(maxParamCount)
 
   if not argv.isNil and paramCount > 0:
     let count = min(argc, paramCount)
@@ -22,149 +22,79 @@ proc fromRawPartsToSeq(argv: ptr ByondValue, argc: int, paramCount: int): lent s
   cache
 
 macro byondProc*(body: untyped): untyped =
-  if body.kind != nnkStmtList:
-    error("byondProc must be followed by a block of proc definitions", body)
+  result = newStmtList()
 
-  var output: seq[NimNode] = @[]
+  let ffiNameStr = $body.name & "_ffi"
+  let ffiIdent= ident(ffiNameStr)
 
-  for stmt in body:
-    if stmt.kind != nnkProcDef:
-      output.add(stmt)
-      continue
+  result.add(body)
 
-    let procDef = stmt
-    var nameNode: NimNode = nil
+  let clr: NimNode = newNimNode(nnkCall)
+  clr.add(body.name)
 
-    for child in procDef.children:
-      if child.kind == nnkIdent:
-        nameNode = child
-        break
+  var i = body.params.len - 1
+  let argsIdent = ident("argsToProc")
 
-    if nameNode.isNil:
-      error("Could not find the procedure name (nnkIdent node) within the proc definition AST.", procDef)
+  for paramIdx in 1..i:
+    var expre = newNimNode(nnkBracketExpr)
+    expre.add(argsIdent, newLit(paramIdx - 1))
+    clr.add(expre)
 
-    let nameStr = $nameNode
-    let ffiNameStr = nameStr & "_ffi"
-    let ffiIdent = ident(ffiNameStr)
+  let overallParams = newLit(i)
 
-    output.add(procDef)
-
-    var formalParams: NimNode = nil
-    for chld in procDef:
-      if chld.kind != nnkFormalParams:
-        continue
-
-      formalParams = chld
-      break
-
-    let clr: NimNode = newNimNode(nnkCall)
-    clr.add(nameNode)
-
-    var i = 0
-    let argsIdent = ident("argsToProc")
-
-    for chld in formalParams:
-      if chld.kind != nnkIdentDefs:
-        continue
-      
-      var expre = newNimNode(nnkBracketExpr)
-      expre.add(argsIdent, newLit(i))
-      clr.add(expre)
-      i.inc
-
-    let overallParams = newLit(i)
-
-    let wrapper = quote do:
-      proc `ffiIdent`*(argc: u4c, argv: ptr ByondValue): ByondValue {.cdecl, dynlib, exportc: `ffiNameStr`.} =
-        result = ByondValue.init()
-        let `argsIdent` = fromRawPartsToSeq(argv, argc.int, `overallParams`)
-        let exceptionLogger = "byondapi_stack_trace".strId()
+  let wrapper = quote do:
+    proc `ffiIdent`*(argc: u4c, argv: ptr ByondValue): ByondValue {.cdecl, dynlib, exportc.} =
+      result = ByondValue.init()
+      let `argsIdent` = fromRawPartsToSeq(argv, argc.int, `overallParams`)
+      let exceptionLogger = "byondapi_stack_trace".strId()
     
-        try:
-          result = `clr`
+      try:
+        result = `clr`
 
-        except ByondCallError as err:
-          discard callGlobalProc(exceptionLogger, [ByondValue.init(err.cstrmsg)])
+      except ByondCallError as err:
+        discard callGlobalProc(exceptionLogger, [ByondValue.init(err.cstrmsg)])
 
-        except CatchableError as err:
-          discard callGlobalProc(exceptionLogger, [ByondValue.init(err.msg)])
+      except CatchableError as err:
+        discard callGlobalProc(exceptionLogger, [ByondValue.init(err.msg)])
 
-    output.add(wrapper)
-
-  result = newStmtList(output)
+  result.add(wrapper)
 
 macro byondAsyncProc*(body: untyped): untyped =
-  if body.kind != nnkStmtList:
-    error("byondAsyncProc must be followed by a block of proc definitions", body)
+  result = newStmtList()
 
-  var output: seq[NimNode] = @[]
+  let ffiNameStr = $body.name & "_ffi"
+  let ffiIdent = ident(ffiNameStr)
 
-  for stmt in body:
-    if stmt.kind != nnkProcDef:
-      output.add(stmt)
-      continue
+  result.add(body)
 
-    let procDef = stmt
-    var nameNode: NimNode = nil
+  let clr: NimNode = newNimNode(nnkCall)
+  clr.add(body.name)
 
-    for child in procDef.children:
-      if child.kind == nnkIdent:
-        nameNode = child
-        break
+  let sleepingProcIdent = ident("sleepingProc")
+  clr.add(sleepingProcIdent)
 
-    if nameNode.isNil:
-      error("Could not find the procedure name (nnkIdent node) within the proc definition AST.", procDef)
+  let i = body.params.len - 1
+  let argsIdent = ident("argsToProc")
 
-    let nameStr = $nameNode
-    let ffiNameStr = nameStr & "_ffi"
-    let ffiIdent = ident(ffiNameStr)
-
-    output.add(procDef)
-
-    var formalParams: NimNode = nil
-    for chld in procDef:
-      if chld.kind != nnkFormalParams:
-        continue
-
-      formalParams = chld
-      break
-
-    let clr: NimNode = newNimNode(nnkCall)
-    clr.add(nameNode)
-
-    let sleepingProcIdent = ident("sleepingProc")
-    clr.add(sleepingProcIdent)
-
-    var i = 0
-    let argsIdent = ident("argsToProc")
-
-    for chld in formalParams:
-      if chld.kind != nnkIdentDefs:
-        continue
-      
-      i.inc
-
-    for paramIdx in 2..i:
-      var expre = newNimNode(nnkBracketExpr)
-      expre.add(argsIdent, newLit(paramIdx - 2))
-      clr.add(expre)
+  for paramIdx in 2..i:
+    var expre = newNimNode(nnkBracketExpr)
+    expre.add(argsIdent, newLit(paramIdx - 2))
+    clr.add(expre)
     
-    let overallParams = newLit(i - 1)
+  let overallParams = newLit(i - 1)
 
-    let wrapper = quote do:
-      proc `ffiIdent`*(argc: u4c, argv: ptr ByondValue, `sleepingProcIdent`: ByondValue): void {.cdecl, dynlib, exportc: `ffiNameStr`.} =
-        let `argsIdent` = fromRawPartsToSeq(argv, argc.int, `overallParams`)
-        let exceptionLogger = "byondapi_stack_trace".strId()
+  let wrapper = quote do:
+    proc `ffiIdent`*(argc: u4c, argv: ptr ByondValue, `sleepingProcIdent`: ByondValue): void {.cdecl, dynlib, exportc.} =
+      let `argsIdent` = fromRawPartsToSeq(argv, argc.int, `overallParams`)
+      let exceptionLogger = "byondapi_stack_trace".strId()
 
-        try:
-          `clr`
+      try:
+        `clr`
 
-        except ByondCallError as err:
-          discard callGlobalProc(exceptionLogger, [ByondValue.init(err.cstrmsg)])
+      except ByondCallError as err:
+        discard callGlobalProc(exceptionLogger, [ByondValue.init(err.cstrmsg)])
 
-        except CatchableError as err:
-          discard callGlobalProc(exceptionLogger, [ByondValue.init(err.msg)])
+      except CatchableError as err:
+        discard callGlobalProc(exceptionLogger, [ByondValue.init(err.msg)])
 
-    output.add(wrapper)
-
-  result = newStmtList(output)
+  result.add(wrapper)

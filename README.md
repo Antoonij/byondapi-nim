@@ -25,39 +25,28 @@ import
   byondapi/value/lib, # ByondValue definition/converters/constructors
   byondapi/[global_proc, strings]
 
-# This macro will create exported procs named `procname`_ffi for all procs in the body.
+# Macro {.byondProc.} will create exported proc named `procname`_ffi.
 # The macro also unpacks arguments from BYOND into the original procs based on their parameters.
 # Missing arguments will be replaced with null ByondValues.
 # Make sure to use the `byond:` prefix in call_ext because byondProc works only with ByondValues.
-byondProc:
-  # Call from byond example: call_ext("file.dll/.so", "byond:meow_ffi")(your args)
-  proc meow(): ByondValue =
-    ByondValue.init(1000 + 984)
+# Call from byond example: call_ext("file.dll/.so", "byond:meow_ffi")(your args)
+proc meow(): ByondValue {.byondProc.} =
+  ByondValue.init(1000 + 984)
 
-   # Call from byond example: call_ext("file.dll/.so", "byond:procCall_ffi")(your args)
-   # You also can use converters for less boilerplate
-  proc procCall(smth: cfloat, bomb: ByondValue): ByondValue =
-    discard callGlobalProc("message_admins".strId, [ByondValue.init(smth)])
-    discard callGlobalProc("message_admins".strId, [bomb.readVar("name".strId)])
+# Call from byond example: call_ext("file.dll/.so", "byond:procCall_ffi")(your args)
+# You also can use converters for less boilerplate
+proc procCall(smth: cfloat, bomb: ByondValue): ByondValue {.byondProc.} =
+  discard callGlobalProc("message_admins".strId, [ByondValue.init(smth)])
+  discard callGlobalProc("message_admins".strId, [bomb.readVar("name".strId)])
 
-    discard bomb.callProc("kaboom".strId, [])
+  discard bomb.callProc("kaboom".strId, [])
 
-    ByondValue.init(smth + 1)
-
-  # Call from byond example: call_ext("file.dll/.so", "byond:lists_ffi")(your args)
-  proc lists(list: ByondValue, anybodyElse: string, bombardiroCrocodilo: string): ByondValue =
-    var connected = anybodyElse & bombardiroCrocodilo
-
-    for elem in list.readList():
-      connected.add(elem.string)
-
-    ByondValue.init(connected)
+  ByondValue.init(smth + 1)
 
 # Same as byondProc, but first parameter should be sleeping proc
-byondAsyncProc:
-  # Call from byond example: call_ext("file.dll/.so", "byond,await:secondExported_ffi")(your args)
-  proc secondExported(sleepy: ByondValue): void = 
-    returnProc(sleepy, ByondValue.init(1984))
+# Call from byond example: call_ext("file.dll/.so", "byond,await:secondExported_ffi")(your args)
+proc secondExported(sleepy: ByondValue): void {.byondAsyncProc.} = 
+  returnProc(sleepy, ByondValue.init(1984))
 ```
 
 # How to compile your projects

@@ -5,7 +5,7 @@ type
 
 proc getBlock*(corner1, corner2: ByondXYZ): seq[ByondValue] =
   var blockBuf {.threadvar, global, gensym.}: seq[ByondValue]
-  blockBuf.setLen(1)
+  if blockBuf.len == 0: blockBuf.setLen(1)
 
   var len = blockBuf.len.u4c
   let callResult = Byond_Block(addr corner1, addr corner2, addr blockBuf[0], addr len)

@@ -5,7 +5,7 @@ proc readList*(loc {.byref.}: ByondValue): seq[ByondValue] =
     raise newException(ByondCallError, "List operation on non-list")
 
   var listBuf {.threadvar, global, gensym.}: seq[ByondValue]
-  listBuf.setLen(1)
+  if listBuf.len == 0: listBuf.setLen(1)
 
   var len = listBuf.len.u4c
   let callResult = Byond_ReadList(addr loc, addr listBuf[0], addr len)
@@ -34,7 +34,7 @@ proc readListAssoc*(loc {.byref.}: ByondValue): seq[ByondValue] =
     raise newException(ByondCallError, "List operation on non-list")
 
   var assocBuf {.threadvar, global, gensym.}: seq[ByondValue]
-  assocBuf.setLen(1)
+  if assocBuf.len == 0: assocBuf.setLen(1)
 
   var len = assocBuf.len.u4c
   let callResult = Byond_ReadListAssoc(addr loc, addr assocBuf[0], addr len)
