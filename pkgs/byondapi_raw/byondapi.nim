@@ -101,9 +101,6 @@ proc Byond_GetDMBVersion*(): u4c
 
 proc ByondValue_Clear*(v: ptr CByondValue)
 
-proc ByondValue_GetType*(v: ptr CByondValue): ByondValueType
-  {.importc: "ByondValue_Type", dynlib: byondLib, cdecl.}
-
 proc ByondValue_IsNull*(v: ptr CByondValue): bool
 
 proc ByondValue_IsNum*(v: ptr CByondValue): bool
@@ -186,12 +183,6 @@ proc Byond_NewArglist*(typ: ptr CByondValue, arglist: ptr CByondValue, result: p
 
 proc Byond_Refcount*(src: ptr CByondValue, result: ptr u4c): bool
 
-proc Byond_GetXYZ*(src: ptr CByondValue, xyz: ptr CByondXYZ): bool
-  {.importc: "Byond_XYZ", dynlib: byondLib, cdecl.}
-
-proc Byond_GetPixLoc*(src: ptr CByondValue, pixloc: ptr CByondPixLoc): bool
-  {.importc: "Byond_PixLoc", dynlib: byondLib, cdecl.}
-
 proc Byond_BoundPixLoc*(src: ptr CByondValue, dir: u1c, pixloc: ptr CByondPixLoc): bool
 
 proc ByondValue_IncRef*(src: ptr CByondValue)
@@ -205,3 +196,12 @@ proc Byond_TestRef*(src: ptr CByondValue): bool
 proc Byond_CRASH*(message: cstring)
 
 {.pop.}
+
+proc Byond_GetXYZ*(src: ptr CByondValue, xyz: ptr CByondXYZ): bool
+  {.importc: "Byond_XYZ", dynlib: byondLib, cdecl.}
+
+proc Byond_GetPixLoc*(src: ptr CByondValue, pixloc: ptr CByondPixLoc): bool
+  {.importc: "Byond_PixLoc", dynlib: byondLib, cdecl.}
+
+proc ByondValue_GetType*(v: ptr CByondValue): ByondValueType
+  {.importc: "ByondValue_Type", dynlib: byondLib, cdecl.}
