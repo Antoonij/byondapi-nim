@@ -1,4 +1,10 @@
-import constructor, value, ../../byondapi_raw/byondapi, ../error, std/options
+import 
+  constructor, 
+  value, 
+  ../../byondapi_raw/byondapi, 
+  ../error, 
+  options, 
+  tables
 
 proc readList*(loc {.byref.}: ByondValue): seq[ByondValue] =
   if not loc.isList():
@@ -29,7 +35,7 @@ proc writeList*(loc {.byref.}: ByondValue, items: seq[ByondValue]) =
 
   handleByondError(Byond_WriteList(addr loc, buffer, len))
 
-proc readListAssoc*(loc {.byref.}: ByondValue): seq[ByondValue] =
+proc readListAssoc*(loc {.byref.}: ByondValue): Table[ByondValue, ByondValue] =
   if not loc.isList():
     raise newException(ByondCallError, "List operation on non-list")
 
@@ -46,10 +52,12 @@ proc readListAssoc*(loc {.byref.}: ByondValue): seq[ByondValue] =
   elif not callResult and len == 0:
     raise newException(ByondCallError, "ReadListAssoc failed with length 0")
 
-  result = newSeq[ByondValue](assocBuf.len)
-  copyMem(result[0].addr, assocBuf[0].addr, assocBuf.len * sizeof(ByondValue))
+  result = initTable[ByondValue, ByondValue](len.int div 2)
 
-proc readListIndex*(loc {.byref.}: ByondValue, idx: ByondValue): ByondValue =
+  for i in countup(0, len.int - 2, 2):
+    result[assocBuf[i]] = assocBuf[i+1]
+
+proc `[]`*(loc {.byref.}: ByondValue, idx: ByondValue): ByondValue =
   if not loc.isList():
     raise newException(ByondCallError, "List operation on non-list")
 
@@ -57,7 +65,7 @@ proc readListIndex*(loc {.byref.}: ByondValue, idx: ByondValue): ByondValue =
 
   handleByondError(Byond_ReadListIndex(addr loc, addr idx, addr result))
 
-proc writeListIndex*(loc {.byref.}: ByondValue, idx: ByondValue, val: ByondValue) =
+proc `[]=`*(loc {.byref.}: ByondValue, idx: ByondValue, val: ByondValue) =
   if not loc.isList():
     raise newException(ByondCallError, "List operation on non-list")
   
